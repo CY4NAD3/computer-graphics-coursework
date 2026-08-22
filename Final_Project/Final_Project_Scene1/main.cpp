@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <GL/glut.h>
 #include <math.h>
+#include <iostream>
 
 #define PI 3.1416
 
@@ -8,1371 +9,841 @@
 //                 GLOBAL VARIABLES
 // =====================================================
 
-float myCartMove = 61.0f;
-float boatMove = 43.0f;
-int boatDirection = 1;
-
+float boatMove = 0.0f;
 float cloudMove = 0.0f;
-float myWheelAngle = 0.0f;
+float vehicleMove = 0.0f;
 
-int animationOn = 1;
-int vehicleOn = 1;
-int boatSailing = 0;
-
-int lightsOn = 1;
-
-// 0 = Dawn, 1 = Day, 2 = Evening, 3 = Night
-int timeMode = 1;
-
+int animationOn = 1;     // Left Click toggles this
+int vehicleMoving = 1;   // Key 6/5 controls this
+int timeMode = 2;        // D(Dawn:1), F(Day:2), E(Evening:3), N(Night:0)
+int lightsOn = 0;        // 'L' toggles street lamps on/off (auto-on at night)
 
 // =====================================================
-//                  RECTANGLE FUNCTION
+//                 BASIC SHAPE FUNCTIONS
 // =====================================================
 
-void rect(float x1,float y1,float x2,float y2,
-          float r,float g,float b)
+void rect(float x1, float y1, float x2, float y2, float r, float g, float b)
 {
-    glColor3f(r,g,b);
-
+    glColor3f(r, g, b);
     glBegin(GL_POLYGON);
-
-    glVertex2f(x1,y1);
-    glVertex2f(x2,y1);
-    glVertex2f(x2,y2);
-    glVertex2f(x1,y2);
-
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y1);
+    glVertex2f(x2, y2);
+    glVertex2f(x1, y2);
     glEnd();
 }
 
+void polygon(float r, float g, float b, int n, float points[][2])
+{
+    glColor3f(r, g, b);
+    glBegin(GL_POLYGON);
+    for(int i = 0; i < n; i++)
+    {
+        glVertex2f(points[i][0], points[i][1]);
+    }
+    glEnd();
+}
 
-// =====================================================
-//                   CIRCLE FUNCTION
-// =====================================================
+void line2D(float x1, float y1, float x2, float y2, float r, float g, float b, float width)
+{
+    glColor3f(r, g, b);
+    glLineWidth(width);
+    glBegin(GL_LINES);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y2);
+    glEnd();
+}
+
+void triangle(float x1, float y1, float x2, float y2, float x3, float y3, float r, float g, float b)
+{
+    glColor3f(r, g, b);
+    glBegin(GL_POLYGON);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y2);
+    glVertex2f(x3, y3);
+    glEnd();
+}
 
 void circle(float radius)
 {
     glBegin(GL_TRIANGLE_FAN);
-
-    glVertex2f(0.0f,0.0f);
-
-    for(int i = 0;i <= 360;i++)
+    glVertex2f(0.0f, 0.0f);
+    for(int i = 0; i <= 360; i++)
     {
         float angle = i * PI / 180.0f;
-
-        glVertex2f(
-            radius * cos(angle),
-            radius * sin(angle)
-        );
+        glVertex2f(radius * cos(angle), radius * sin(angle));
     }
-
     glEnd();
 }
 
-
 // =====================================================
-//                   TRIANGLE FUNCTION
-// =====================================================
-
-void triangle(float x1,float y1,
-              float x2,float y2,
-              float x3,float y3,
-              float r,float g,float b)
-{
-    glColor3f(r,g,b);
-
-    glBegin(GL_POLYGON);
-
-    glVertex2f(x1,y1);
-    glVertex2f(x2,y2);
-    glVertex2f(x3,y3);
-
-    glEnd();
-}
-
-
-// =====================================================
-//                     QUAD FUNCTION
-// =====================================================
-
-void quad(float x1,float y1,
-          float x2,float y2,
-          float x3,float y3,
-          float x4,float y4,
-          float r,float g,float b)
-{
-    glColor3f(r,g,b);
-
-    glBegin(GL_POLYGON);
-
-    glVertex2f(x1,y1);
-    glVertex2f(x2,y2);
-    glVertex2f(x3,y3);
-    glVertex2f(x4,y4);
-
-    glEnd();
-}
-
-
-// =====================================================
-//                  HOUSE WINDOW
-// =====================================================
-
-void windowGlow(float x1,float y1,float x2,float y2)
-{
-    if(timeMode == 3 && lightsOn == 1)
-        rect(x1,y1,x2,y2,1.0f,0.82f,0.25f);
-    else
-        rect(x1,y1,x2,y2,0.18f,0.13f,0.08f);
-}
-
-
-// =====================================================
-//                         SUN
+//                 CELESTIAL BODIES (SUN & MOON)
 // =====================================================
 
 void sun()
 {
-    if(timeMode == 3)
-        return;
+    glPushMatrix();
+    glTranslatef(53.0f, 88.0f, 0.0f);
+    glColor3f(1.0f, 0.85f, 0.05f);
+    circle(4.2f);
+    glPopMatrix();
+}
+
+void moon()
+{
+    glPushMatrix();
+    glTranslatef(75.0f, 85.0f, 0.0f);
+    glColor3f(0.92f, 0.94f, 0.98f);
+    circle(3.5f);
+    glPopMatrix();
+}
+
+// =====================================================
+//                        CLOUD
+// =====================================================
+
+void cloud(float x, float y)
+{
+    glColor3f(1.0f, 1.0f, 1.0f);
 
     glPushMatrix();
+    glTranslatef(x, y, 0);
+    circle(2.8f);
+    glPopMatrix();
 
-    if(timeMode == 0)
+    glPushMatrix();
+    glTranslatef(x + 3.2f, y + 1.0f, 0);
+    circle(3.6f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(x + 6.8f, y, 0);
+    circle(2.8f);
+    glPopMatrix();
+}
+
+// =====================================================
+//                    BACKGROUND HILLS
+// =====================================================
+
+void mountain(float x1, float y1, float xPeak, float yPeak, float x2, float y2, float r, float g, float b)
+{
+    glColor3f(r, g, b);
+    glBegin(GL_TRIANGLES);
+    glVertex2f(x1, y1);
+    glVertex2f(xPeak, yPeak);
+    glVertex2f(x2, y2);
+    glEnd();
+
+    glColor3f(r * 0.70f, g * 0.70f, b * 0.70f);
+    glBegin(GL_TRIANGLES);
+    glVertex2f(xPeak, yPeak);
+    glVertex2f(x2, y2);
+    glVertex2f(xPeak + (x2 - xPeak) * 0.4f, y1);
+    glEnd();
+}
+
+void hills()
+{
+    // Back mountain
+    mountain(64, 52, 82, 88, 110, 52, 0.35f, 0.52f, 0.20f);
+    // Front mountain
+    mountain(57, 52, 73, 78, 88, 52, 0.43f, 0.60f, 0.24f);
+}
+
+// =====================================================
+//                        TREE
+// =====================================================
+
+void tree(float x, float y, float scale)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+    glScalef(scale, scale, 1.0f);
+
+    rect(-0.55f, 0.0f, 0.55f, 5.0f, 0.34f, 0.21f, 0.09f);
+
+    triangle(-3.7f, 3.5f, 3.7f, 3.5f, 0.0f, 10.5f, 0.15f, 0.34f, 0.06f);
+    triangle(-2.8f, 8.0f, 2.8f, 8.0f, 0.0f, 14.0f, 0.21f, 0.43f, 0.08f);
+
+    glPopMatrix();
+}
+
+// =====================================================
+//                        HOUSE
+// =====================================================
+
+void house(float x, float y, float w, float h, float bodyR, float bodyG, float bodyB, float roofR, float roofG, float roofB)
+{
+    rect(x, y, x + w, y + h, bodyR, bodyG, bodyB);
+
+    float roof[][2] = {
+        {x - 1.5f, y + h},
+        {x + w * 0.25f, y + h + 8.0f},
+        {x + w * 0.75f, y + h + 7.0f},
+        {x + w + 1.5f, y + h}
+    };
+    polygon(roofR, roofG, roofB, 4, roof);
+
+    line2D(x + w * 0.25f, y + h + 8.0f, x + w * 0.48f, y + h, 0.25f, 0.12f, 0.08f, 1.0f);
+
+    rect(x + w * 0.58f, y, x + w * 0.76f, y + h * 0.48f, 0.27f, 0.15f, 0.08f);
+
+    glPushMatrix();
+    glTranslatef(x + w * 0.72f, y + h * 0.25f, 0.0f);
+    glColor3f(0.90f, 0.78f, 0.25f);
+    circle(0.22f);
+    glPopMatrix();
+
+    rect(x + w * 0.16f, y + h * 0.38f, x + w * 0.37f, y + h * 0.62f, 0.36f, 0.24f, 0.12f);
+
+    line2D(x + w * 0.265f, y + h * 0.38f, x + w * 0.265f, y + h * 0.62f, 0.08f, 0.08f, 0.06f, 1.0f);
+    line2D(x + w * 0.16f, y + h * 0.50f, x + w * 0.37f, y + h * 0.50f, 0.08f, 0.08f, 0.06f, 1.0f);
+}
+
+// =====================================================
+//                     STREET LAMP
+// =====================================================
+
+void streetLamp(float x, float y)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+
+    rect(0.0f, 0.0f, 0.5f, 7.0f, 0.20f, 0.20f, 0.18f);
+    rect(0.5f, 6.5f, 3.0f, 7.0f, 0.20f, 0.20f, 0.18f);
+
+    glPushMatrix();
+    glTranslatef(3.0f, 6.0f, 0.0f);
+
+    if (lightsOn == 1 || timeMode == 0) // Lit at night or when toggled
     {
-        glTranslatef(25.0f,88.0f,0.0f);
-        glColor3f(1.0f,0.45f,0.12f);
-    }
-    else if(timeMode == 1)
-    {
-        glTranslatef(53.2f,88.0f,0.0f);
-        glColor3f(1.0f,0.80f,0.05f);
+        glColor3f(1.0f, 1.0f, 0.5f);
+        circle(1.0f);
     }
     else
     {
-        glTranslatef(80.0f,78.0f,0.0f);
-        glColor3f(1.0f,0.35f,0.05f);
+        glColor3f(1.0f, 0.86f, 0.25f);
+        circle(0.8f);
     }
-
-    circle(4.0f);
+    glPopMatrix();
 
     glPopMatrix();
 }
 
-
 // =====================================================
-//                         CLOUD
+//                     WATER WELL
 // =====================================================
 
-void cloud(float x,float y,float scale)
+void well(float x, float y, float scale)
 {
-    if(timeMode == 3)
-        return;
-
-    glColor3f(1.0f,1.0f,1.0f);
-
     glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+    glScalef(scale, scale, 1.0f);
 
-    glTranslatef(x,y,0.0f);
-    glScalef(scale,scale,1.0f);
+    rect(-3.0f, 0.0f, 3.0f, 3.5f, 0.55f, 0.55f, 0.58f);
+    rect(-2.1f, 2.0f, 2.1f, 3.5f, 0.15f, 0.15f, 0.18f);
 
-    circle(3.0f);
-
-    glTranslatef(3.0f,1.7f,0.0f);
-    circle(4.0f);
-
-    glTranslatef(3.0f,-1.7f,0.0f);
-    circle(3.0f);
-
-    glPopMatrix();
-}
-
-
-// =====================================================
-//                       MOUNTAINS
-// =====================================================
-
-void mountains()
-{
-    // Large right mountain
-    triangle(
-        72.0f,64.0f,
-        98.5f,64.0f,
-        83.5f,86.0f,
-        0.27f,0.46f,0.19f
-    );
-
-    // Smaller front mountain
-    triangle(
-        65.0f,64.0f,
-        82.0f,64.0f,
-        75.0f,77.5f,
-        0.39f,0.58f,0.25f
-    );
-}
-
-
-// =====================================================
-//                          FIELD
-// =====================================================
-
-void field()
-{
-    rect(
-        0.0f,0.0f,
-        100.0f,64.0f,
-        0.43f,0.68f,0.23f
-    );
-}
-
-
-// =====================================================
-//                    ROAD CENTRE LINE
-// =====================================================
-
-float roadY(float x)
-{
-    return 31.0f + (62.0f - 31.0f) * (x / 100.0f);
-}
-
-
-// =====================================================
-//                         RIVER
-// =====================================================
-
-void river()
-{
-    glColor3f(0.10f,0.61f,0.83f);
-
-    glBegin(GL_POLYGON);
-
-    // Upper edge
-    glVertex2f(0.0f,24.7f);
-    glVertex2f(34.0f,30.0f);
-    glVertex2f(63.0f,35.0f);
-    glVertex2f(100.0f,41.0f);
-
-    // Right lower edge
-    glVertex2f(100.0f,18.0f);
-
-    // Bottom edge
-    glVertex2f(0.0f,2.2f);
-
-    glEnd();
-
-    // Water ripples
-    glColor3f(0.38f,0.78f,0.92f);
-
-    glLineWidth(1.3f);
-
+    glColor3f(0.34f, 0.20f, 0.08f);
+    glLineWidth(2.5f);
     glBegin(GL_LINES);
-
-    glVertex2f(4.0f,17.0f);
-    glVertex2f(10.0f,17.0f);
-
-    glVertex2f(8.0f,8.0f);
-    glVertex2f(14.0f,8.0f);
-
-    glVertex2f(31.0f,12.5f);
-    glVertex2f(37.0f,12.5f);
-
-    glVertex2f(55.0f,20.8f);
-    glVertex2f(61.0f,20.8f);
-
-    glVertex2f(75.0f,25.0f);
-    glVertex2f(82.0f,25.0f);
-
-    glVertex2f(91.0f,34.0f);
-    glVertex2f(98.0f,34.0f);
-
+    glVertex2f(-2.5f, 3.5f); glVertex2f(-2.5f, 7.5f);
+    glVertex2f(2.5f, 3.5f); glVertex2f(2.5f, 7.5f);
     glEnd();
-}
 
+    triangle(-3.2f, 7.5f, 3.2f, 7.5f, 0.0f, 10.5f, 0.45f, 0.22f, 0.10f);
 
-// =====================================================
-//                         ROAD
-// =====================================================
-
-void road()
-{
-    // Main road
-    quad(
-        0.0f,27.0f,
-        100.0f,56.0f,
-        100.0f,63.2f,
-        0.0f,34.2f,
-        0.25f,0.25f,0.27f
-    );
-
-    // Road edge lines
-    glColor3f(0.12f,0.12f,0.12f);
-
+    glColor3f(0.85f, 0.85f, 0.85f);
     glLineWidth(1.5f);
-
     glBegin(GL_LINES);
-
-    glVertex2f(0.0f,27.0f);
-    glVertex2f(100.0f,56.0f);
-
-    glVertex2f(0.0f,34.2f);
-    glVertex2f(100.0f,63.2f);
-
+    glVertex2f(0.0f, 7.5f); glVertex2f(0.0f, 2.8f);
     glEnd();
 
-    // Dashed white centre line
-    glColor3f(0.96f,0.96f,0.96f);
-
-    glLineWidth(2.2f);
-
-    for(float x = 2.0f;x < 100.0f;x += 7.0f)
-    {
-        float y = 30.6f + (x / 100.0f) * 29.0f;
-
-        glBegin(GL_LINES);
-
-        glVertex2f(x,y);
-        glVertex2f(x + 3.5f,y + 1.0f);
-
-        glEnd();
-    }
-}
-
-
-// =====================================================
-//                       FENCE LINE
-// =====================================================
-
-void fenceLine(float x1,float y1,
-               float x2,float y2,
-               int posts)
-{
-    glColor3f(0.42f,0.25f,0.12f);
-
-    glLineWidth(1.7f);
-
-    // Main upper rail
-    glBegin(GL_LINES);
-
-    glVertex2f(x1,y1);
-    glVertex2f(x2,y2);
-
-    glEnd();
-
-    // Lower rail
-    glBegin(GL_LINES);
-
-    glVertex2f(x1,y1 - 2.0f);
-    glVertex2f(x2,y2 - 2.0f);
-
-    glEnd();
-
-    // Vertical posts
-    for(int i = 0;i <= posts;i++)
-    {
-        float t = (float)i / posts;
-
-        float px = x1 + (x2-x1)*t;
-        float py = y1 + (y2-y1)*t;
-
-        glBegin(GL_LINES);
-
-        glVertex2f(px,py-2.8f);
-        glVertex2f(px,py+0.8f);
-
-        glEnd();
-    }
-}
-
-
-// =====================================================
-//                         TREE
-// =====================================================
-
-void tree(float x,float y,float scale)
-{
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-    glScalef(scale,scale,1.0f);
-
-    // Trunk
-    rect(
-        -0.55f,0.0f,
-        0.55f,5.0f,
-        0.34f,0.21f,0.09f
-    );
-
-    // Lower leaves
-    triangle(
-        -3.7f,3.5f,
-        3.7f,3.5f,
-        0.0f,10.5f,
-        0.15f,0.34f,0.06f
-    );
-
-    // Upper leaves
-    triangle(
-        -2.8f,8.0f,
-        2.8f,8.0f,
-        0.0f,14.0f,
-        0.21f,0.43f,0.08f
-    );
-
+    rect(-0.5f, 1.8f, 0.5f, 2.8f, 0.35f, 0.35f, 0.38f);
     glPopMatrix();
 }
-
-
-// =====================================================
-//                         BUSH
-// =====================================================
-
-void bush(float x,float y,float scale)
-{
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-    glScalef(scale,scale,1.0f);
-
-    glColor3f(0.14f,0.34f,0.06f);
-
-    glPushMatrix();
-    glTranslatef(-1.5f,0.0f,0.0f);
-    circle(1.5f);
-    glPopMatrix();
-
-    glColor3f(0.20f,0.43f,0.07f);
-
-    glPushMatrix();
-    glTranslatef(0.0f,0.8f,0.0f);
-    circle(2.0f);
-    glPopMatrix();
-
-    glColor3f(0.14f,0.34f,0.06f);
-
-    glPushMatrix();
-    glTranslatef(1.7f,0.0f,0.0f);
-    circle(1.5f);
-    glPopMatrix();
-
-    glPopMatrix();
-}
-
-
-// =====================================================
-//                         HOUSE
-// =====================================================
-
-void house(float x,float y,float scale,
-           float wallR,float wallG,float wallB,
-           float roofR,float roofG,float roofB)
-{
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-    glScalef(scale,scale,1.0f);
-
-    // Main body
-    rect(
-        -7.0f,0.0f,
-        7.0f,12.0f,
-        wallR,wallG,wallB
-    );
-
-    // Roof
-    triangle(
-        -7.8f,12.0f,
-        7.8f,12.0f,
-        0.0f,18.5f,
-        roofR,roofG,roofB
-    );
-
-    // Door
-    rect(
-        1.0f,0.0f,
-        4.2f,6.2f,
-        0.23f,0.15f,0.07f
-    );
-
-    // Window
-    windowGlow(
-        -4.8f,4.0f,
-        -1.3f,7.5f
-    );
-
-    // Window frame
-    glColor3f(0.10f,0.08f,0.04f);
-
-    glLineWidth(1.2f);
-
-    glBegin(GL_LINES);
-
-    glVertex2f(-3.05f,4.0f);
-    glVertex2f(-3.05f,7.5f);
-
-    glVertex2f(-4.8f,5.75f);
-    glVertex2f(-1.3f,5.75f);
-
-    glEnd();
-
-    glPopMatrix();
-}
-
-
-// =====================================================
-//                     SMALL HOUSE
-// =====================================================
-
-void smallHouse(float x,float y,float scale,
-                float wallR,float wallG,float wallB,
-                float roofR,float roofG,float roofB)
-{
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-    glScalef(scale,scale,1.0f);
-
-    rect(
-        -5.5f,0.0f,
-        5.5f,9.5f,
-        wallR,wallG,wallB
-    );
-
-    triangle(
-        -6.0f,9.5f,
-        6.0f,9.5f,
-        0.0f,14.5f,
-        roofR,roofG,roofB
-    );
-
-    rect(
-        0.5f,0.0f,
-        3.0f,5.0f,
-        0.23f,0.15f,0.07f
-    );
-
-    rect(
-        -4.0f,3.8f,
-        -1.3f,6.3f,
-        0.18f,0.13f,0.08f
-    );
-
-    glPopMatrix();
-}
-
 
 // =====================================================
 //                    MARKET STALL
 // =====================================================
 
-void marketStall(float x,float y,
-                 float r,float g,float b)
+void stall(float x, float y, float r, float g, float b)
 {
-    glPushMatrix();
+    rect(x, y, x + 7.0f, y + 3.0f, 0.48f, 0.28f, 0.10f);
+    rect(x + 0.7f, y + 0.6f, x + 6.3f, y + 2.4f, 0.40f, 0.27f, 0.12f);
+    rect(x - 0.3f, y + 5.5f, x + 7.3f, y + 7.0f, r, g, b);
 
-    glTranslatef(x,y,0.0f);
-
-    // Table legs
-    glColor3f(0.25f,0.14f,0.06f);
-
-    glLineWidth(2.0f);
-
-    glBegin(GL_LINES);
-
-    glVertex2f(-4.5f,0.0f);
-    glVertex2f(-4.5f,4.0f);
-
-    glVertex2f(4.5f,0.0f);
-    glVertex2f(4.5f,4.0f);
-
-    glEnd();
-
-    // Table
-    rect(
-        -5.0f,4.0f,
-        5.0f,5.5f,
-        0.45f,0.25f,0.10f
-    );
-
-    // Goods
-    rect(
-        -4.3f,5.5f,
-        4.3f,6.5f,
-        0.58f,0.34f,0.12f
-    );
-
-    // Awning
-    rect(
-        -5.2f,6.5f,
-        5.2f,7.8f,
-        r,g,b
-    );
-
-    // White stripes
-    for(float i = -4.8f;i < 4.8f;i += 2.0f)
+    for(int i = 0; i < 4; i++)
     {
-        rect(
-            i,6.5f,
-            i+1.0f,7.8f,
-            0.95f,0.93f,0.84f
-        );
+        rect(x + i * 1.8f, y + 5.5f, x + i * 1.8f + 0.9f, y + 7.0f, 0.95f, 0.85f, 0.55f);
     }
 
-    glPopMatrix();
+    rect(x + 0.3f, y + 3.0f, x + 0.7f, y + 6.0f, 0.23f, 0.14f, 0.07f);
+    rect(x + 6.3f, y + 3.0f, x + 6.7f, y + 6.0f, 0.23f, 0.14f, 0.07f);
+
+    glColor3f(0.40f, 0.10f, 0.10f);
+    for(int i = 0; i < 5; i++)
+    {
+        glPushMatrix();
+        glTranslatef(x + 1.0f + i * 1.1f, y + 1.4f + (i % 2) * 0.35f, 0.0f);
+        circle(0.4f);
+        glPopMatrix();
+    }
 }
 
-
 // =====================================================
-//                       VILLAGER
+//                      FENCE LINE
 // =====================================================
 
-void villager(float x,float y,
-              float shirtR,float shirtG,float shirtB)
+void fenceLine(float x1, float y1, float x2, float y2, int posts)
 {
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-
-    // Head
-    glColor3f(0.76f,0.50f,0.28f);
-    circle(0.9f);
-
-    // Body
-    rect(
-        -0.8f,-2.4f,
-        0.8f,-0.2f,
-        shirtR,shirtG,shirtB
-    );
-
-    // Legs
-    glColor3f(0.10f,0.08f,0.05f);
-
-    glLineWidth(1.5f);
+    glColor3f(0.42f, 0.25f, 0.12f);
+    glLineWidth(7.0f);
 
     glBegin(GL_LINES);
-
-    glVertex2f(-0.4f,-2.4f);
-    glVertex2f(-0.8f,-4.0f);
-
-    glVertex2f(0.4f,-2.4f);
-    glVertex2f(0.8f,-4.0f);
-
+    glVertex2f(x1, y1); glVertex2f(x2, y2);
+    glVertex2f(x1, y1 - 2.0f); glVertex2f(x2, y2 - 2.0f);
     glEnd();
 
-    // Arms
-    glBegin(GL_LINES);
+    for(int i = 0; i <= posts; i++)
+    {
+        float t = (float)i / posts;
+        float px = x1 + (x2 - x1) * t;
+        float py = y1 + (y2 - y1) * t;
 
-    glVertex2f(-0.7f,-0.7f);
-    glVertex2f(-1.4f,-2.0f);
-
-    glVertex2f(0.7f,-0.7f);
-    glVertex2f(1.4f,-2.0f);
-
-    glEnd();
-
-    glPopMatrix();
+        glBegin(GL_LINES);
+        glVertex2f(px, py - 2.8f);
+        glVertex2f(px, py + 0.8f);
+        glEnd();
+    }
 }
 
-
 // =====================================================
-//                    PARKED CAR
+//                  STATIC BULLOCK CART
 // =====================================================
 
-void parkedCar(float x,float y)
+void bullockCart(float x, float y)
 {
     glPushMatrix();
+    glTranslatef(x, y, 0.0f);
 
-    glTranslatef(x,y,0.0f);
+    float cartBody[][2] = {
+        {-3.5f, 1.0f}, {3.5f, 1.0f}, {3.2f, 4.0f}, {-3.2f, 4.0f}
+    };
+    polygon(0.46f, 0.30f, 0.14f, 4, cartBody);
 
-    // Main body
-    rect(
-        -5.5f,0.0f,
-        5.5f,2.8f,
-        0.17f,0.32f,0.63f
-    );
-
-    // Top cabin
-    quad(
-        -3.7f,2.8f,
-        3.2f,2.8f,
-        2.0f,5.0f,
-        -2.3f,5.0f,
-        0.17f,0.32f,0.63f
-    );
-
-    // Windows
-    quad(
-        -2.0f,3.1f,
-        -0.1f,3.1f,
-        -0.1f,4.5f,
-        -1.5f,4.5f,
-        0.30f,0.47f,0.70f
-    );
-
-    quad(
-        0.2f,3.1f,
-        2.5f,3.1f,
-        1.8f,4.5f,
-        0.2f,4.5f,
-        0.30f,0.47f,0.70f
-    );
-
-    // Wheels
-    glColor3f(0.08f,0.08f,0.08f);
-
-    glPushMatrix();
-    glTranslatef(-3.4f,0.0f,0.0f);
-    circle(1.25f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(3.4f,0.0f,0.0f);
-    circle(1.25f);
-    glPopMatrix();
-
-    glPopMatrix();
-}
-
-
-// =====================================================
-//                  BULLOCK CART WHEEL
-// =====================================================
-
-void cartWheel(float x,float y,float angle)
-{
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-    glRotatef(angle,0,0,1);
-
-    glColor3f(0.10f,0.10f,0.10f);
-    circle(1.25f);
-
-    glColor3f(0.72f,0.72f,0.72f);
-
-    glLineWidth(1.2f);
-
-    glBegin(GL_LINES);
-
-    glVertex2f(-0.9f,0.0f);
-    glVertex2f(0.9f,0.0f);
-
-    glVertex2f(0.0f,-0.9f);
-    glVertex2f(0.0f,0.9f);
-
-    glEnd();
-
-    glPopMatrix();
-}
-
-
-// =====================================================
-//                      BULLOCK CART
-// =====================================================
-
-void bullockCart(float x,float y,float angle)
-{
-    glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-
-    // Cart body
-    quad(
-        -4.0f,1.0f,
-        3.8f,1.0f,
-        3.5f,4.2f,
-        -3.8f,4.2f,
-        0.46f,0.30f,0.14f
-    );
-
-    // Front raised portion
-    quad(
-        3.5f,1.0f,
-        5.2f,1.5f,
-        5.0f,3.6f,
-        3.5f,4.2f,
-        0.46f,0.30f,0.14f
-    );
-
-    // Wooden pole toward the animal
-    glColor3f(0.34f,0.20f,0.08f);
-
+    glColor3f(0.34f, 0.20f, 0.08f);
     glLineWidth(2.0f);
-
     glBegin(GL_LINES);
-
-    glVertex2f(5.0f,2.6f);
-    glVertex2f(9.0f,3.2f);
-
+    glVertex2f(3.2f, 2.5f); glVertex2f(6.5f, 1.2f);
     glEnd();
+
+    // Left Wheel
+    glPushMatrix();
+    glTranslatef(-2.0f, 0.8f, 0.0f);
+    glColor3f(0.12f, 0.12f, 0.12f);
+    circle(1.25f);
+    glColor3f(0.75f, 0.75f, 0.75f);
+    glLineWidth(1.2f);
+    glBegin(GL_LINES);
+    glVertex2f(-1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
+    glVertex2f(0.0f, -1.0f); glVertex2f(0.0f, 1.0f);
+    glEnd();
+    glPopMatrix();
+
+    // Right Wheel
+    glPushMatrix();
+    glTranslatef(2.0f, 0.8f, 0.0f);
+    glColor3f(0.12f, 0.12f, 0.12f);
+    circle(1.25f);
+    glColor3f(0.75f, 0.75f, 0.75f);
+    glLineWidth(1.2f);
+    glBegin(GL_LINES);
+    glVertex2f(-1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
+    glVertex2f(0.0f, -1.0f); glVertex2f(0.0f, 1.0f);
+    glEnd();
+    glPopMatrix();
+
+    glPopMatrix();
+}
+
+// =====================================================
+//                       BOAT
+// =====================================================
+
+void boat(float x, float y, int flipped)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+
+    if(flipped == 1)
+    {
+        glScalef(-1.0f, 1.0f, 1.0f);
+    }
+
+    float body[][2] = { {4, 0}, {11, 0}, {15, 4}, {0, 4} };
+    polygon(0.40f, 0.22f, 0.10f, 4, body);
+
+    line2D(0, 4, 15, 4, 0.18f, 0.10f, 0.04f, 2.0f);
+    rect(7.0f, 4.0f, 7.5f, 15.0f, 0.25f, 0.16f, 0.08f);
+
+    float sail[][2] = { {7.5f, 14.8f}, {14.0f, 10.0f}, {7.5f, 8.8f} };
+    polygon(0.96f, 0.96f, 0.93f, 3, sail);
+
+    glPopMatrix();
+}
+
+void smallBoat(float x, float y)
+{
+    float body[][2] = { {x + 2, y}, {x + 8, y}, {x + 10, y + 2}, {x, y + 2} };
+    polygon(0.58f, 0.34f, 0.15f, 4, body);
+    rect(x + 1.0f, y + 2.0f, x + 8.8f, y + 2.6f, 0.36f, 0.22f, 0.08f);
+}
+
+void dockLog(float x, float y)
+{
+    rect(x, y, x + 5.0f, y + 1.0f, 0.30f, 0.19f, 0.09f);
+    rect(x - 1.4f, y - 3.5f, x + 0.6f, y + 1.4f, 0.24f, 0.15f, 0.07f);
+}
+
+// =====================================================
+//                     WATER RIPPLE
+// =====================================================
+
+void ripple(float x, float y, float w)
+{
+    line2D(x, y, x + w, y, 0.08f, 0.55f, 0.72f, 1.3f);
+    line2D(x + w * 0.20f, y + 1.2f, x + w * 0.65f, y + 1.2f, 0.08f, 0.55f, 0.72f, 1.0f);
+}
+
+// =====================================================
+//                     VILLAGE PEOPLE
+// =====================================================
+
+void person(float x, float y, float scale, float bodyR, float bodyG, float bodyB)
+{
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+    glScalef(scale, scale, 1.0f);
+
+    glPushMatrix();
+    glTranslatef(0.0f, 5.0f, 0.0f);
+    glColor3f(0.72f, 0.48f, 0.30f);
+    circle(0.9f);
+    glPopMatrix();
+
+    rect(-1.0f, 0.0f, 1.0f, 4.0f, bodyR, bodyG, bodyB);
+
+    line2D(-0.5f, 0.0f, -0.8f, -2.2f, 0.10f, 0.10f, 0.10f, 1.7f);
+    line2D(0.5f, 0.0f, 0.8f, -2.2f, 0.10f, 0.10f, 0.10f, 1.7f);
+
+    glPopMatrix();
+}
+
+// =====================================================
+//                        BUSH
+// =====================================================
+
+void bush(float x, float y, float s)
+{
+    glColor3f(0.20f, 0.42f, 0.12f);
+
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    circle(1.6f * s);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(x + 1.9f * s, y + 0.6f * s, 0);
+    circle(2.1f * s);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(x + 3.8f * s, y, 0);
+    circle(1.6f * s);
+    glPopMatrix();
+}
+
+void grassMark(float x, float y)
+{
+    line2D(x, y, x - 1.0f, y + 2.0f, 0.20f, 0.38f, 0.10f, 1.2f);
+    line2D(x, y, x + 0.8f, y + 2.2f, 0.20f, 0.38f, 0.10f, 1.2f);
+    line2D(x, y, x, y + 2.4f, 0.20f, 0.38f, 0.10f, 1.0f);
+}
+
+// =====================================================
+//                        RIVER
+// =====================================================
+
+void riverBand()
+{
+    float xs[5]  = {0, 23, 45, 69, 100};
+    float topY[5] = {25, 29, 34, 38, 42};
+    float botY[5];
+
+    for(int i = 0; i < 5; i++)
+    {
+        botY[i] = 12.0f + (27.0f - 12.0f) * (xs[i] / 100.0f);
+    }
+
+    for(int i = 0; i < 4; i++)
+    {
+        float quad[][2] = {
+            {xs[i], botY[i]}, {xs[i+1], botY[i+1]}, {xs[i+1], topY[i+1]}, {xs[i], topY[i]}
+        };
+        polygon(0.20f, 0.67f, 0.84f, 4, quad);
+    }
+
+    for(int i = 0; i < 4; i++)
+    {
+        line2D(xs[i], topY[i], xs[i+1], topY[i+1], 0.12f, 0.32f, 0.36f, 2.0f);
+    }
+
+    line2D(xs[0], botY[0], xs[4], botY[4], 0.12f, 0.32f, 0.36f, 2.0f);
+
+    ripple(7, 17, 6);
+    ripple(23, 20, 7);
+    ripple(44, 24, 6);
+    ripple(57, 27, 6);
+    ripple(82, 32, 7);
+    ripple(89, 37, 5);
+}
+
+// =====================================================
+//                        ROAD
+// =====================================================
+
+void road()
+{
+    float roadShape[][2] = { {0, 30}, {100, 57}, {100, 64}, {0, 37} };
+    polygon(0.25f, 0.25f, 0.27f, 4, roadShape);
+
+    line2D(0, 30, 100, 57, 0.95f, 0.95f, 0.95f, 2.0f);
+    line2D(0, 37, 100, 64, 0.95f, 0.95f, 0.95f, 2.0f);
+
+    for(int i = 0; i < 8; i++)
+    {
+        float x1 = i * 14.0f - 1.0f;
+        float y1 = 33.5f + i * 3.78f;
+        float x2 = x1 + 7.0f;
+        float y2 = y1 + 1.9f;
+        line2D(x1, y1, x2, y2, 1.0f, 1.0f, 1.0f, 2.2f);
+    }
+}
+
+// =====================================================
+//                   MOVING CAR
+// =====================================================
+
+void movingCar(float xProg)
+{
+    // Map xProg (0 to 100) along the road slant
+    float cx = fmod(xProg, 100.0f);
+    if (cx < 0) cx += 100.0f;
+    float cy = 31.0f + (cx / 100.0f) * (58.0f - 31.0f);
+
+    glPushMatrix();
+    glTranslatef(cx, cy, 0.0f);
+    glScalef(0.8f, 0.8f, 1.0f);
+
+    // Car Body
+    rect(0.0f, 0.0f, 6.0f, 2.2f, 0.82f, 0.22f, 0.18f);
+    rect(1.2f, 2.2f, 4.8f, 3.8f, 0.75f, 0.85f, 0.92f); // Roof/Windows
 
     // Wheels
-    cartWheel(-2.5f,0.8f,angle);
-    cartWheel(2.2f,0.8f,angle);
-
-    glPopMatrix();
-}
-
-
-// =====================================================
-//                         BOAT
-// =====================================================
-
-void boat(float x,float y,float scale)
-{
     glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-    glScalef(scale,scale,1.0f);
-
-    // Hull
-    glColor3f(0.42f,0.25f,0.10f);
-
-    glBegin(GL_POLYGON);
-
-    glVertex2f(-5.0f,0.0f);
-    glVertex2f(5.0f,0.0f);
-    glVertex2f(3.0f,-1.7f);
-    glVertex2f(-3.0f,-1.7f);
-
-    glEnd();
-
-    // Top edge
-    glColor3f(0.18f,0.11f,0.05f);
-
-    glLineWidth(1.5f);
-
-    glBegin(GL_LINES);
-
-    glVertex2f(-5.0f,0.0f);
-    glVertex2f(5.0f,0.0f);
-
-    glEnd();
-
-    // Mast
-    rect(
-        -0.25f,0.0f,
-        0.25f,9.0f,
-        0.35f,0.21f,0.08f
-    );
-
-    // Sail
-    triangle(
-        0.3f,8.6f,
-        0.3f,2.5f,
-        7.0f,5.0f,
-        0.96f,0.95f,0.90f
-    );
-
-    // Sail outline
-    glColor3f(0.15f,0.15f,0.15f);
-
-    glLineWidth(1.0f);
-
-    glBegin(GL_LINE_LOOP);
-
-    glVertex2f(0.3f,8.6f);
-    glVertex2f(0.3f,2.5f);
-    glVertex2f(7.0f,5.0f);
-
-    glEnd();
-
+    glTranslatef(1.5f, 0.0f, 0.0f);
+    glColor3f(0.1f, 0.1f, 0.1f);
+    circle(0.7f);
     glPopMatrix();
-}
 
-
-// =====================================================
-//                       FOUNTAIN
-// =====================================================
-
-void fountain(float x,float y)
-{
     glPushMatrix();
-
-    glTranslatef(x,y,0.0f);
-
-    // Basin
-    quad(
-        -3.0f,0.0f,
-        3.0f,0.0f,
-        2.4f,2.0f,
-        -2.4f,2.0f,
-        0.47f,0.47f,0.43f
-    );
-
-    // Top
-    rect(
-        -2.2f,2.0f,
-        2.2f,2.6f,
-        0.55f,0.55f,0.50f
-    );
-
-    // Water
-    rect(
-        -1.9f,2.1f,
-        1.9f,2.45f,
-        0.20f,0.65f,0.82f
-    );
+    glTranslatef(4.5f, 0.0f, 0.0f);
+    glColor3f(0.1f, 0.1f, 0.1f);
+    circle(0.7f);
+    glPopMatrix();
 
     glPopMatrix();
 }
 
-
 // =====================================================
-//                    VILLAGE SCENE
+//                     MAIN VILLAGE SCENE
 // =====================================================
 
 void village()
 {
-    // Background
-    if(timeMode == 0)
-        glClearColor(0.90f,0.55f,0.42f,1.0f);
-    else if(timeMode == 1)
-        glClearColor(0.25f,0.58f,0.84f,1.0f);
-    else if(timeMode == 2)
-        glClearColor(0.78f,0.35f,0.24f,1.0f);
-    else
-        glClearColor(0.03f,0.05f,0.16f,1.0f);
+    // Time of day color setup
+    float skyR, skyG, skyB;
 
+    if (timeMode == 0)      // Night (N)
+    {
+        skyR = 0.06f; skyG = 0.08f; skyB = 0.18f;
+    }
+    else if (timeMode == 1) // Dawn (D)
+    {
+        skyR = 0.85f; skyG = 0.50f; skyB = 0.35f;
+    }
+    else if (timeMode == 2) // Day (F)
+    {
+        skyR = 0.28f; skyG = 0.61f; skyB = 0.84f;
+    }
+    else                    // Evening (E)
+    {
+        skyR = 0.55f; skyG = 0.30f; skyB = 0.45f;
+    }
+
+    glClearColor(skyR, skyG, skyB, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
     glLoadIdentity();
 
-    // =================================================
-    // BACKGROUND
-    // =================================================
+    // Background Sky
+    rect(0, 40, 100, 100, skyR, skyG, skyB);
 
-    field();
+    if (timeMode == 0)
+    {
+        moon();
+    }
+    else
+    {
+        sun();
+    }
 
-    sun();
-
+    // Clouds
     glPushMatrix();
-
-    glTranslatef(cloudMove,0.0f,0.0f);
-
-    cloud(22.0f,87.0f,0.95f);
-    cloud(37.0f,78.0f,0.75f);
-    cloud(64.0f,87.0f,1.0f);
-
+    glTranslatef(cloudMove, 0, 0);
+    cloud(18, 87);
+    cloud(33, 80);
+    cloud(61, 90);
     glPopMatrix();
 
-    mountains();
+    hills();
 
-    // =================================================
-    // HOUSES BEHIND THE ROAD
-    // =================================================
+    // Green Field
+    rect(0, 0, 100, 52, 0.42f, 0.62f, 0.30f);
+    rect(0, 48, 100, 63, 0.40f, 0.60f, 0.28f);
 
-    // Left large house
-    house(
-        12.0f,46.0f,0.95f,
-        0.90f,0.84f,0.62f,
-        0.82f,0.20f,0.07f
-    );
-
-    // Middle-left house
-    house(
-        30.0f,55.0f,0.82f,
-        0.91f,0.84f,0.62f,
-        0.78f,0.22f,0.08f
-    );
-
-    // Middle house
-    house(
-        42.0f,56.0f,0.72f,
-        0.89f,0.83f,0.62f,
-        0.78f,0.22f,0.08f
-    );
-
-    // Wooden house
-    smallHouse(
-        60.0f,62.0f,0.75f,
-        0.58f,0.36f,0.23f,
-        0.25f,0.17f,0.10f
-    );
-
-    // Right middle houses
-    smallHouse(
-        84.0f,40.5f,0.90f,
-        0.68f,0.40f,0.27f,
-        0.28f,0.18f,0.10f
-    );
-
-    smallHouse(
-        94.0f,42.0f,0.75f,
-        0.90f,0.84f,0.62f,
-        0.82f,0.20f,0.07f
-    );
-
-    // =================================================
-    // TREES BEHIND ROAD
-    // =================================================
-
-    tree(4.5f,61.0f,0.90f);
-    tree(20.5f,56.0f,0.85f);
-    tree(36.5f,60.0f,0.90f);
-    tree(67.0f,59.0f,0.90f);
-    tree(73.0f,53.0f,0.75f);
-    tree(93.0f,61.0f,0.90f);
-
-    bush(54.0f,57.0f,0.85f);
-    bush(75.0f,58.0f,0.70f);
-
-    // =================================================
-    // RIVER
-    // =================================================
-
-    river();
-
-    // =================================================
-    // ROAD
-    // =================================================
-
+    riverBand();
     road();
 
-    // Fence on upper side of road
-    fenceLine(
-        0.0f,35.5f,
-        100.0f,64.5f,
-        12
-    );
+    // Bushes (7)
+    bush(28, 6, 1.0f);
+    bush(67, 5, 1.0f);
+    bush(25, 33, 0.9f);
+    bush(94, 47, 0.8f);
+    bush(72, 60, 0.7f);
+    bush(53, 55, 0.7f);
+    bush(10, 45, 0.9f);
 
-    // Fence on lower side of road
-    fenceLine(
-        0.0f,25.8f,
-        68.0f,45.5f,
-        9
-    );
+    // Fences (2)
+    fenceLine(0.0f, 32.0f, 100.0f, 60.0f, 12);
+    fenceLine(0.0f, 40.0f, 100.0f, 67.0f, 9);
 
-    // =================================================
-    // MARKET AREA
-    // =================================================
+    // Trees (10 total: 5 background + 5 small near field)
+    tree(5, 57, 1.1f);
+    tree(20, 62, 1.2f);
+    tree(35, 60, 1.25f);
+    tree(48, 61, 1.1f);
+    tree(63, 58, 1.0f);
 
-    marketStall(
-        27.0f,52.0f,
-        0.78f,0.12f,0.10f
-    );
+    tree(5, 47, 0.8f);
+    tree(20, 45, 0.6f);
+    tree(66, 40, 0.8f);
+    tree(72, 10, 0.9f);
+    tree(95, 12, 0.7f);
 
-    marketStall(
-        35.5f,51.0f,
-        0.85f,0.70f,0.18f
-    );
+    // Small Houses (6)
+    house(7, 53, 13, 9, 0.92f, 0.83f, 0.55f, 0.90f, 0.30f, 0.16f);
+    house(22, 56, 12, 8, 0.85f, 0.74f, 0.45f, 0.75f, 0.18f, 0.10f);
+    house(37, 58, 10, 7, 0.88f, 0.77f, 0.52f, 0.82f, 0.25f, 0.10f);
+    house(50, 59, 8, 7, 0.75f, 0.45f, 0.31f, 0.40f, 0.25f, 0.15f);
+    house(82, 45, 10, 6, 0.90f, 0.79f, 0.53f, 0.95f, 0.25f, 0.12f);
+    house(75, 44, 9, 5, 0.72f, 0.42f, 0.30f, 0.45f, 0.25f, 0.13f);
 
-    villager(
-        34.5f,51.5f,
-        0.20f,0.38f,0.64f
-    );
+    // Water Wells (2)
+    well(48.0, 54.0, 1.00);
+    well(60.0f, 6.0f, 1.25f);
 
-    villager(
-        38.5f,52.0f,
-        0.78f,0.28f,0.25f
-    );
+    // Market Stalls (3)
+    stall(23, 50, 0.88f, 0.08f, 0.08f);
+    stall(31, 52, 0.95f, 0.72f, 0.06f);
+    stall(80, 7, 0.90f, 0.08f, 0.08f);
 
-    villager(
-        30.0f,49.5f,
-        0.30f,0.55f,0.35f
-    );
+    // Village People (4)
+    person(39, 55, 0.65f, 0.25f, 0.30f, 0.75f);
+    person(42, 55, 0.65f, 0.80f, 0.20f, 0.30f);
+    person(40, 52, 0.7f, 0.30f, 0.55f, 0.75f);
+    person(43, 52, 0.7f, 0.30f, 0.55f, 0.75f);
 
-    // =================================================
-    // CAR
-    // =================================================
+    // Bullock Cart (Static) (1)
+    bullockCart(55, 39);
 
-    parkedCar(10.5f,36.0f);
+    // Moving Car along road
+    movingCar(vehicleMove);
 
-    // =================================================
-    // CART
-    // =================================================
+    // Boats (2 sailing + 1 docked)
+    boat(69 + boatMove, 25, 0);
+    boat(28, 16, 0);
 
-    bullockCart(
-        myCartMove,
-        roadY(myCartMove) - 8.0f,
-        myWheelAngle
-    );
+    dockLog(41, 38);
+    smallBoat(38, 32);
+    line2D(47.0f, 33.6f, 45.0f, 38.0f, 0.30f, 0.20f, 0.10f, 1.5f);
 
-    // =================================================
-    // RIVER BOATS
-    // =================================================
+    // Grass Marks (12)
+    grassMark(10, 5);
+    grassMark(20, 10);
+    grassMark(41, 8);
+    grassMark(53, 12);
+    grassMark(76, 9);
+    grassMark(84, 16);
+    grassMark(96, 9);
+    grassMark(5, 44);
+    grassMark(15, 47);
+    grassMark(58, 56);
+    grassMark(68, 58);
+    grassMark(81, 41);
 
-    boat(23.0f,15.5f,0.85f);
-
-    boat(43.0f,27.5f,0.62f);
-
-    boat(
-        boatMove,
-        24.0f + boatMove * 0.12f,
-        0.82f
-    );
-
-    // =================================================
-    // FOREGROUND
-    // =================================================
-
-    tree(46.0f,2.0f,0.80f);
-
-    bush(35.0f,5.0f,0.75f);
-    bush(66.0f,8.0f,0.72f);
-
-    fountain(57.5f,3.0f);
-
-    // Bottom-right house
-    house(
-        81.0f,5.0f,0.82f,
-        0.91f,0.84f,0.62f,
-        0.82f,0.20f,0.07f
-    );
-
-    // Bottom-right stall
-    marketStall(
-        93.0f,5.0f,
-        0.78f,0.12f,0.10f
-    );
+    // Street Lamps (5)
+    streetLamp(15.0f, 32.0f);
+    streetLamp(39.0f, 48.0f);
+    streetLamp(62.0f, 46.0f);
+    streetLamp(77.0f, 58.0f);
+    streetLamp(95.0f, 54.0f);
 
     glutSwapBuffers();
 }
 
-
 // =====================================================
-//                 NEXT SCENE PLACEHOLDER
-// =====================================================
-
-void nextScene()
-{
-    glClearColor(0.0f,0.0f,0.0f,1.0f);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glutSwapBuffers();
-}
-
-
-// =====================================================
-//                    UPDATE FUNCTION
+//                   UPDATE ANIMATION
 // =====================================================
 
 void update(int value)
 {
     if(animationOn == 1)
     {
-        // Clouds
-        cloudMove += 0.025f;
+        cloudMove += 0.03f;
+        if(cloudMove > 105.0f) cloudMove = -105.0f;
 
-        if(cloudMove > 15.0f)
-            cloudMove = -15.0f;
+        boatMove += 0.03f;
+        if(boatMove > 16.0f) boatMove = -16.0f;
 
-        // Bullock cart
-        if(vehicleOn == 1)
+        if(vehicleMoving == 1)
         {
-            myCartMove += 0.10f;
-            myWheelAngle -= 5.0f;
-
-            if(myCartMove > 108.0f)
-                myCartMove = -8.0f;
-
-            if(myWheelAngle < -360.0f)
-                myWheelAngle = 0.0f;
-        }
-
-        // Boat
-        if(boatSailing == 1)
-        {
-            boatMove += 0.08f * boatDirection;
-
-            if(boatMove > 94.0f)
-                boatDirection = -1;
-
-            if(boatMove < 6.0f)
-                boatDirection = 1;
+            vehicleMove += 0.05f;
+            if(vehicleMove > 105.0f) vehicleMove = -5.0f;
         }
     }
 
     glutPostRedisplay();
-
-    glutTimerFunc(20,update,0);
+    glutTimerFunc(20, update, 0);
 }
 
-
 // =====================================================
-//                    MOUSE CONTROL
+//                 MOUSE INTERACTIONS
 // =====================================================
 
-void handleMouse(int button,int state,int x,int y)
+void handleMouse(int button, int state, int x, int y)
 {
     if(state == GLUT_DOWN)
     {
-        // LEFT = animation pause/resume
         if(button == GLUT_LEFT_BUTTON)
         {
-            if(animationOn == 1)
-                animationOn = 0;
-            else
-                animationOn = 1;
+            // Toggle all animations start/stop
+            animationOn = !animationOn;
         }
-
-        // RIGHT = ferry on/off
         else if(button == GLUT_RIGHT_BUTTON)
         {
-            if(boatSailing == 1)
-                boatSailing = 0;
-            else
-                boatSailing = 1;
+            // Right click boosts boat sail
+            boatMove += 2.0f;
         }
     }
-
     glutPostRedisplay();
 }
 
-
 // =====================================================
-//                  KEYBOARD CONTROL
+//                 KEYBOARD INTERACTIONS
 // =====================================================
 
-void handleKeypress(unsigned char key,int x,int y)
+void handleKeypress(unsigned char key, int x, int y)
 {
     switch(key)
     {
-        // C = Next Scene
         case 'c':
         case 'C':
-
-            glutDisplayFunc(nextScene);
-
-            glutPostRedisplay();
-
+            std::cout << "[Scene Switch] Transitioning to Next Scene..." << std::endl;
             break;
 
-        // 1 = Dawn
-        case '1':
-
-            timeMode = 0;
-
-            glutDisplayFunc(village);
-
-            glutPostRedisplay();
-
+        case '6':
+            vehicleMoving = 1; // Move vehicle
             break;
 
-        // 2 = Day
-        case '2':
-
-            timeMode = 1;
-
-            glutDisplayFunc(village);
-
-            glutPostRedisplay();
-
+        case '5':
+            vehicleMoving = 0; // Stop vehicle
             break;
 
-        // 3 = Evening
-        case '3':
-
-            timeMode = 2;
-
-            glutDisplayFunc(village);
-
-            glutPostRedisplay();
-
+        case 'd':
+        case 'D':
+            timeMode = 1; // Dawn
             break;
 
-        // 4 = Night
-        case '4':
-
-            timeMode = 3;
-
-            glutDisplayFunc(village);
-
-            glutPostRedisplay();
-
+        case 'f':
+        case 'F':
+            timeMode = 2; // Day
             break;
 
-        // L = Lights
+        case 'e':
+        case 'E':
+            timeMode = 3; // Evening
+            break;
+
+        case 'n':
+        case 'N':
+            timeMode = 0; // Night
+            break;
+
         case 'l':
         case 'L':
+            lightsOn = !lightsOn; // Toggle lights
+            break;
 
-            if(lightsOn == 1)
-                lightsOn = 0;
-            else
-                lightsOn = 1;
-
-            glutPostRedisplay();
-
+        case 27: // ESC
+            exit(0);
             break;
     }
-}
-
-
-// =====================================================
-//                  ARROW KEY CONTROL
-// =====================================================
-
-void handleSpecialKey(int key,int x,int y)
-{
-    switch(key)
-    {
-        // RIGHT = cart moves
-        case GLUT_KEY_RIGHT:
-
-            vehicleOn = 1;
-
-            break;
-
-        // LEFT = cart stops
-        case GLUT_KEY_LEFT:
-
-            vehicleOn = 0;
-
-            break;
-    }
-
     glutPostRedisplay();
 }
 
-
 // =====================================================
-//                         INIT
+//                        INIT
 // =====================================================
 
 void init()
 {
     glMatrixMode(GL_PROJECTION);
-
     glLoadIdentity();
-
-    gluOrtho2D(0,100,0,100);
-
+    gluOrtho2D(0, 100, 0, 100);
     glMatrixMode(GL_MODELVIEW);
-
     glLoadIdentity();
-
-    glClearColor(0.25f,0.58f,0.84f,1.0f);
 }
 
-
 // =====================================================
-//                         MAIN
+//                        MAIN
 // =====================================================
 
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
-    glutInit(&argc,argv);
-
+    glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-
-    glutInitWindowSize(1000,775);
-
-    glutInitWindowPosition(100,50);
-
-    glutCreateWindow("Scene 1 - Village");
+    glutInitWindowSize(1200, 900);
+    glutInitWindowPosition(100, 40);
+    glutCreateWindow("Scene-1 : Village");
 
     init();
 
     glutDisplayFunc(village);
-
     glutKeyboardFunc(handleKeypress);
-
-    glutSpecialFunc(handleSpecialKey);
-
     glutMouseFunc(handleMouse);
-
-    glutTimerFunc(20,update,0);
+    glutTimerFunc(20, update, 0);
 
     glutMainLoop();
-
     return 0;
 }
