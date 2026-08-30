@@ -5,6 +5,8 @@
 	<math.h>
 	<iostream>
 
+1526093414 
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\windows.h
 	<_mingw.h>
 	<sdkddkver.h>
@@ -53,6 +55,8 @@
 	"sdks/_mingw_directx.h"
 	"sdks/_mingw_ddk.h"
 
+1526093414 gw_ddk.h"
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\_mingw_mac.h
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\_mingw_secapi.h
@@ -62,6 +66,8 @@
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\stddef.h
 	<crtdefs.h>
+
+1526093416 >
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\crtdefs.h
 	<_mingw.h>
@@ -97,6 +103,8 @@
 	<_mingw.h>
 	<_mingw_unicode.h>
 
+1526093414 icode.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\_mingw_unicode.h
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\excpt.h
@@ -105,12 +113,16 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\stdarg.h
 	<_mingw_stdarg.h>
 
+1526093414 darg.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\_mingw_stdarg.h
 	<vadefs.h>
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\windef.h
 	<minwindef.h>
 	<winnt.h>
+
+1526093414 
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\minwindef.h
 	<_mingw.h>
@@ -123,6 +135,8 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\specstrings.h
 	<sal.h>
 	<driverspecs.h>
+
+1526093414 cs.h>
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\sal.h
 
@@ -162,6 +176,8 @@
 	"pshpack4.h"
 	"poppack.h"
 
+1526093414 "
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\ctype.h
 	<crtdefs.h>
 
@@ -171,6 +187,8 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\psdk_inc\intrin-impl.h
 	<intrin.h>
 	<psdk_inc/intrin-impl.h>
+
+1526093414 intrin-impl.h>
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\intrin.h
 	<crtdefs.h>
@@ -219,6 +237,8 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\string.h
 	<crtdefs.h>
 	<sec_api/string_s.h>
+
+1526093414 tring_s.h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\sec_api\string_s.h
 	<string.h>
@@ -270,6 +290,8 @@
 	<winerror.h>
 	<timezoneapi.h>
 
+1526093414 pi.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\apisetcconv.h
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\minwinbase.h
@@ -279,6 +301,8 @@
 	<apisetcconv.h>
 	<minwindef.h>
 	<minwinbase.h>
+
+1526093416 e.h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\debugapi.h
 	<apiset.h>
@@ -290,6 +314,8 @@
 	<apiset.h>
 	<apisetcconv.h>
 	<minwindef.h>
+
+1526093414 .h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\fibersapi.h
 	<apiset.h>
@@ -437,6 +463,8 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\winerror.h
 	<fltwinerror.h>
 
+1526093414 or.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\fltwinerror.h
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\timezoneapi.h
@@ -482,6 +510,8 @@
 	<libloaderapi.h>
 	<stringapiset.h>
 
+1526093414 set.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\datetimeapi.h
 	<apiset.h>
 	<apisetcconv.h>
@@ -497,6 +527,8 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\wincon.h
 	<_mingw_unicode.h>
 	<winapifamily.h>
+
+1526093414 ily.h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\winreg.h
 	<_mingw_unicode.h>
@@ -588,6 +620,8 @@
 	<psdk_inc/_xmitfile.h>
 	<psdk_inc/_wsa_errnos.h>
 
+1526093414 _wsa_errnos.h>
+
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\_timeval.h
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\_bsd_types.h
@@ -596,15 +630,21 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\inaddr.h
 	<_bsd_types.h>
 
+1526093414 s.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\psdk_inc\_socket_types.h
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\psdk_inc\_fd_types.h
 	<psdk_inc/_socket_types.h>
 
+1526093414 _socket_types.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\psdk_inc\_ip_types.h
 	<_bsd_types.h>
 	<inaddr.h>
 	<_timeval.h>
+
+1526093414 h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\psdk_inc\_ip_mreq1.h
 	<inaddr.h>
@@ -642,6 +682,8 @@
 	<winioctl.h>
 	"winsmcrd.h"
 	"SCardErr.h"
+
+1526093414 h"
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\wtypes.h
 	<rpc.h>
@@ -841,6 +883,8 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\stralign.h
 	<sec_api/stralign_s.h>
 
+1526093414 tralign_s.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\sec_api\stralign_s.h
 	<stralign.h>
 
@@ -849,6 +893,8 @@
 	<_mingw_unicode.h>
 	<apisetcconv.h>
 
+1526093414 nv.h>
+
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\mcx.h
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\imm.h
@@ -856,6 +902,8 @@
 
 1490634692 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glut.h
 	"freeglut_std.h"
+
+1490634692 std.h"
 
 1490634692 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\freeglut_std.h
 	<windows.h>
@@ -874,4 +922,10 @@
 
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\math.h
 	<crtdefs.h>
+
+1787403892 source:/run/media/azraf/SSD samsung/-ComputerGraphics/Final_Project/Final_Project_Scene_01_working/main.cpp
+	<windows.h>
+	<GL/glut.h>
+	<math.h>
+	<iostream>
 

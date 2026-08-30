@@ -672,7 +672,7 @@ void movingCar(float xProg)
     float cx = xProg;
 
     // Center of the lane (average of road's top/bottom edges)
-    float cy = 33.5f + cx * 0.27f;
+    float cy = 35.5f + cx * 0.27f;
 
     // Road rises 27 units over 100 - same slope as road()
     float roadAngle = atan2f(27.0f, 100.0f) * 180.0f / PI;
@@ -765,13 +765,11 @@ void village()
     tree(72, 10, 0.9f);
     tree(95, 12, 0.7f);
 
-    // Small Houses (6)
+    // Small Houses (4)
     house(7, 53, 13, 9, 0.92f, 0.83f, 0.55f, 0.90f, 0.30f, 0.16f);
     house(22, 56, 12, 8, 0.85f, 0.74f, 0.45f, 0.75f, 0.18f, 0.10f);
     house(37, 58, 10, 7, 0.88f, 0.77f, 0.52f, 0.82f, 0.25f, 0.10f);
     house(50, 59, 8, 7, 0.75f, 0.45f, 0.31f, 0.40f, 0.25f, 0.15f);
-    house(82, 45, 10, 6, 0.90f, 0.79f, 0.53f, 0.95f, 0.25f, 0.12f);
-    house(75, 44, 9, 5, 0.72f, 0.42f, 0.30f, 0.45f, 0.25f, 0.13f);
 
     // Water Wells (2)
     well(48.0, 54.0, 1.00);
@@ -796,6 +794,10 @@ void village()
 
     // Moving Car along road
     movingCar(vehicleMove);
+
+    //Small Houses below road(2)
+    house(82, 45, 10, 6, 0.90f, 0.79f, 0.53f, 0.95f, 0.25f, 0.12f);
+    house(75, 44, 9, 5, 0.72f, 0.42f, 0.30f, 0.45f, 0.25f, 0.13f);
 
     // Grass Marks (12)
     grassMark(10, 5);
