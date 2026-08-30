@@ -870,3 +870,7 @@
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glu.h
 	<GL/gl.h>
 
+1786500549 source:g:\-computergraphics\lab_task\lab_task_05\labtask_05.1\main.cpp
+	<windows.h>
+	<GL/glut.h>
+

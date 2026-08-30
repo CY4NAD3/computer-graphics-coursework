@@ -1,9 +1,13 @@
 # depslib dependency file v1.0
-1787400991 source:g:\-computergraphics\final_project\final_project_scene1\main.cpp
-	<windows.h>
-	<GL/glut.h>
-	<math.h>
+1788092287 source:g:\-computergraphics\lab_task\lab_task_05\lab_task_05\main.cpp
 	<iostream>
+	<GL/gl.h>
+	<GL/glut.h>
+	<windows.h>
+
+1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\gl.h
+	<windows.h>
+	<stddef.h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\windows.h
 	<_mingw.h>
@@ -865,13 +869,6 @@
 	<GL/glu.h>
 	<stdlib.h>
 
-1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\gl.h
-	<windows.h>
-	<stddef.h>
-
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\gl\glu.h
 	<GL/gl.h>
-
-1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\math.h
-	<crtdefs.h>
 

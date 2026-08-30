@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1787403892 source:g:\-computergraphics\final_project\final_project_scene_01_working\main.cpp
+1788084566 source:g:\-computergraphics\final_project\final_project_scene_01_working\main.cpp
 	<windows.h>
 	<GL/glut.h>
 	<math.h>
@@ -121,8 +121,6 @@
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\windef.h
 	<minwindef.h>
 	<winnt.h>
-
-1526093414 
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\minwindef.h
 	<_mingw.h>
