@@ -285,7 +285,7 @@ void streetLampA(float x, float y) { // ref#streetLampA
     glPushMatrix();
     glTranslatef(3.0f, 6.0f, 0.0f);
 
-    if (lightsOn == 1 || timeMode == 0) // Lit at night or when toggled
+    if (lightsOn == 1 || timeMode == 0) // Light at night or when L is pressed
     {
         glColor3f(1.0f, 1.0f, 0.5f);
         circle(1.0f);
@@ -310,7 +310,7 @@ void streetLampB(float x, float y) { // ref#streetLampB
     glPushMatrix();
     glTranslatef(3.0f, 6.0f, 0.0f);
 
-    if (lightsOn == 1 || timeMode == 0) // Lit at night or when toggled
+    if (lightsOn == 1 || timeMode == 0)
     {
         glColor3f(1.0f, 1.0f, 0.5f);
         circle(1.0f);
@@ -354,7 +354,7 @@ void streetLampC(float x, float y) { // ref#streetLampC
 //                     WATER WELL
 // =====================================================
 
-void wellA(float x, float y, float scale) { // ref#wellA // ref#wellA
+void wellA(float x, float y, float scale) { // ref#wellA
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glScalef(scale, scale, 1.0f);
@@ -381,7 +381,7 @@ void wellA(float x, float y, float scale) { // ref#wellA // ref#wellA
     glPopMatrix();
 }
 
-void wellB(float x, float y, float scale) { // ref#wellB // ref#wellB
+void wellB(float x, float y, float scale) { // ref#wellB
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glScalef(scale, scale, 1.0f);
@@ -412,7 +412,30 @@ void wellB(float x, float y, float scale) { // ref#wellB // ref#wellB
 //                    MARKET STALL
 // =====================================================
 
-void stallA(float x, float y, float r, float g, float b) { // ref#stallA // ref#stallA
+void stallA(float x, float y, float r, float g, float b) { // ref#stallA
+    rect(x, y, x + 7.0f, y + 3.0f, 0.48f, 0.28f, 0.10f);
+    rect(x + 0.7f, y + 0.6f, x + 6.3f, y + 2.4f, 0.40f, 0.27f, 0.12f);
+    rect(x - 0.3f, y + 5.5f, x + 7.3f, y + 7.0f, r, g, b); //stripe color
+    //roof stripes
+    for(int i = 0; i < 4; i++)
+    {
+        rect(x + i * 1.8f, y + 5.5f, x + i * 1.8f + 0.9f, y + 7.0f, 0.95f, 0.85f, 0.55f);
+    }
+    //support pillars
+    rect(x + 0.3f, y + 3.0f, x + 0.7f, y + 6.0f, 0.23f, 0.14f, 0.07f);
+    rect(x + 6.3f, y + 3.0f, x + 6.7f, y + 6.0f, 0.23f, 0.14f, 0.07f);
+    //fruits or items
+    glColor3f(0.40f, 0.10f, 0.10f);
+    for(int i = 0; i < 5; i++)
+    {
+        glPushMatrix();
+        glTranslatef(x + 1.0f + i * 1.1f, y + 1.4f + (i % 2) * 0.35f, 0.0f);
+        circle(0.4f);
+        glPopMatrix();
+    }
+}
+
+void stallB(float x, float y, float r, float g, float b) { // ref#stallB
     rect(x, y, x + 7.0f, y + 3.0f, 0.48f, 0.28f, 0.10f);
     rect(x + 0.7f, y + 0.6f, x + 6.3f, y + 2.4f, 0.40f, 0.27f, 0.12f);
     rect(x - 0.3f, y + 5.5f, x + 7.3f, y + 7.0f, r, g, b);
@@ -435,30 +458,7 @@ void stallA(float x, float y, float r, float g, float b) { // ref#stallA // ref#
     }
 }
 
-void stallB(float x, float y, float r, float g, float b) { // ref#stallB // ref#stallB
-    rect(x, y, x + 7.0f, y + 3.0f, 0.48f, 0.28f, 0.10f);
-    rect(x + 0.7f, y + 0.6f, x + 6.3f, y + 2.4f, 0.40f, 0.27f, 0.12f);
-    rect(x - 0.3f, y + 5.5f, x + 7.3f, y + 7.0f, r, g, b);
-
-    for(int i = 0; i < 4; i++)
-    {
-        rect(x + i * 1.8f, y + 5.5f, x + i * 1.8f + 0.9f, y + 7.0f, 0.95f, 0.85f, 0.55f);
-    }
-
-    rect(x + 0.3f, y + 3.0f, x + 0.7f, y + 6.0f, 0.23f, 0.14f, 0.07f);
-    rect(x + 6.3f, y + 3.0f, x + 6.7f, y + 6.0f, 0.23f, 0.14f, 0.07f);
-
-    glColor3f(0.40f, 0.10f, 0.10f);
-    for(int i = 0; i < 5; i++)
-    {
-        glPushMatrix();
-        glTranslatef(x + 1.0f + i * 1.1f, y + 1.4f + (i % 2) * 0.35f, 0.0f);
-        circle(0.4f);
-        glPopMatrix();
-    }
-}
-
-void stallC(float x, float y, float r, float g, float b) { // ref#stallC // ref#stallC
+void stallC(float x, float y, float r, float g, float b) { // ref#stallC
     rect(x, y, x + 7.0f, y + 3.0f, 0.48f, 0.28f, 0.10f);
     rect(x + 0.7f, y + 0.6f, x + 6.3f, y + 2.4f, 0.40f, 0.27f, 0.12f);
     rect(x - 0.3f, y + 5.5f, x + 7.3f, y + 7.0f, r, g, b);
@@ -485,7 +485,7 @@ void stallC(float x, float y, float r, float g, float b) { // ref#stallC // ref#
 //                      FENCE LINE
 // =====================================================
 
-void fenceLineA(float x1, float y1, float x2, float y2, int posts) { // ref#fenceLineA // ref#fenceLineA
+void fenceLineA(float x1, float y1, float x2, float y2, int posts) { // ref#fenceLineA
     glColor3f(0.42f, 0.25f, 0.12f);
     glLineWidth(7.0f);
 
@@ -507,7 +507,7 @@ void fenceLineA(float x1, float y1, float x2, float y2, int posts) { // ref#fenc
     }
 }
 
-void fenceLineB(float x1, float y1, float x2, float y2, int posts) { // ref#fenceLineB // ref#fenceLineB
+void fenceLineB(float x1, float y1, float x2, float y2, int posts) { // ref#fenceLineB
     glColor3f(0.42f, 0.25f, 0.12f);
     glLineWidth(7.0f);
 
@@ -533,13 +533,15 @@ void fenceLineB(float x1, float y1, float x2, float y2, int posts) { // ref#fenc
 //                  STATIC BULLOCK CART
 // =====================================================
 
-void bullockCart(float x, float y)
-{ // ref#bullockCart
+void bullockCart(float x, float y){ // ref#bullockCart
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
 
     float cartBody[][2] = {
-        {-3.5f, 1.0f}, {3.5f, 1.0f}, {3.2f, 4.0f}, {-3.2f, 4.0f}
+        {-3.5f, 1.0f},
+        {3.5f, 1.0f},
+        {3.2f, 4.0f},
+        {-3.2f, 4.0f}
     };
     polygon(0.46f, 0.30f, 0.14f, 4, cartBody);
 
@@ -582,8 +584,7 @@ void bullockCart(float x, float y)
 //                       BOAT
 // =====================================================
 
-void boat(float x, float y, int flipped, float angle = 0.0f)
-{ // ref#boat
+void boat(float x, float y, int flipped, float angle = 0.0f){ // ref#boat
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glRotatef(angle, 0, 0, 1);
@@ -593,13 +594,21 @@ void boat(float x, float y, int flipped, float angle = 0.0f)
         glScalef(-1.0f, 1.0f, 1.0f);
     }
 
-    float body[][2] = { {4, 0}, {11, 0}, {15, 4}, {0, 4} };
+    float body[][2] =
+    { {4, 0},
+      {11, 0},
+      {15, 4},
+      {0, 4}};
     polygon(0.40f, 0.22f, 0.10f, 4, body);
 
     line2D(0, 4, 15, 4, 0.18f, 0.10f, 0.04f, 2.0f);
+
     rect(7.0f, 4.0f, 7.5f, 15.0f, 0.25f, 0.16f, 0.08f);
 
-    float sail[][2] = { {7.5f, 14.8f}, {14.0f, 10.0f}, {7.5f, 8.8f} };
+    float sail[][2] =
+    { {7.5f, 14.8f},
+    {14.0f, 10.0f},
+    {7.5f, 8.8f} };
     polygon(0.96f, 0.96f, 0.93f, 3, sail);
 
     glPopMatrix();
@@ -609,29 +618,27 @@ void boat(float x, float y, int flipped, float angle = 0.0f)
 //                    MOVING BOAT
 // =====================================================
 
-void movingBoat(float xProg)
-{ // ref#movingBoat
+void movingBoat(float xProg){ // ref#movingBoat
     float bx = xProg;
 
-    // River center line runs roughly from (0, 18.5) to (100, 34.5) -
-    // matches riverBand()'s top/bottom edges averaged together.
+    // River center line runs roughly from (0, 18.5) to (100, 34.5)
     float by = 18.5f + bx * 0.16f;
 
-    // River rises ~16 units over 100 - keeps the boat's tilt aligned with the water
-    float riverAngle = atan2f(16.0f, 100.0f) * 180.0f / PI;
+    // River rises ~16 units over 100 keeps the boat's tilt aligned with the water
+    float riverAngle = atan2f(16.0f, 100.0f) * 180.0f / PI; //tan inverse
 
     boat(bx, by, 0, riverAngle);
 }
-
-void smallBoat(float x, float y)
-{ // ref#smallBoat
+// =====================================================
+//                    Docked BOAT
+// =====================================================
+void smallBoat(float x, float y){ // ref#smallBoat
     float body[][2] = { {x + 2, y}, {x + 8, y}, {x + 10, y + 2}, {x, y + 2} };
     polygon(0.58f, 0.34f, 0.15f, 4, body);
     rect(x + 1.0f, y + 2.0f, x + 8.8f, y + 2.6f, 0.36f, 0.22f, 0.08f);
 }
 
-void dockLog(float x, float y)
-{ // ref#dockLog
+void dockLog(float x, float y){ // ref#dockLog
     rect(x, y, x + 5.0f, y + 1.0f, 0.30f, 0.19f, 0.09f);
     rect(x - 1.4f, y - 3.5f, x + 0.6f, y + 1.4f, 0.24f, 0.15f, 0.07f);
 }
@@ -640,8 +647,7 @@ void dockLog(float x, float y)
 //                    MOVING BOAT 2
 // =====================================================
 
-void movingBoat2(float xProg)
-{ // ref#movingBoat2
+void movingBoat2(float xProg){ // ref#movingBoat2
     float bx = xProg;
 
     // Hugs the lower/bottom part of the river band
@@ -656,8 +662,7 @@ void movingBoat2(float xProg)
 //                     WATER RIPPLE
 // =====================================================
 
-void ripple(float x, float y, float w)
-{ // ref#ripple
+void ripple(float x, float y, float w){ // ref#ripple
     line2D(x, y, x + w, y, 0.08f, 0.55f, 0.72f, 1.3f);
     line2D(x + w * 0.20f, y + 1.2f, x + w * 0.65f, y + 1.2f, 0.08f, 0.55f, 0.72f, 1.0f);
 }
@@ -666,7 +671,7 @@ void ripple(float x, float y, float w)
 //                     VILLAGE PEOPLE
 // =====================================================
 
-void personA(float x, float y, float scale, float bodyR, float bodyG, float bodyB) { // ref#personA // ref#personA
+void personA(float x, float y, float scale, float bodyR, float bodyG, float bodyB) { // ref#personA
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glScalef(scale, scale, 1.0f);
@@ -685,7 +690,7 @@ void personA(float x, float y, float scale, float bodyR, float bodyG, float body
     glPopMatrix();
 }
 
-void personB(float x, float y, float scale, float bodyR, float bodyG, float bodyB) { // ref#personB // ref#personB
+void personB(float x, float y, float scale, float bodyR, float bodyG, float bodyB) { // ref#personB
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glScalef(scale, scale, 1.0f);
@@ -704,7 +709,7 @@ void personB(float x, float y, float scale, float bodyR, float bodyG, float body
     glPopMatrix();
 }
 
-void personC(float x, float y, float scale, float bodyR, float bodyG, float bodyB) { // ref#personC // ref#personC
+void personC(float x, float y, float scale, float bodyR, float bodyG, float bodyB) { // ref#personC
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glScalef(scale, scale, 1.0f);
@@ -727,7 +732,7 @@ void personC(float x, float y, float scale, float bodyR, float bodyG, float body
 //                        BUSH
 // =====================================================
 
-void bushA(float x, float y, float s) { // ref#bushA // ref#bushA
+void bushA(float x, float y, float s) { // ref#bushA
     glColor3f(0.20f, 0.42f, 0.12f);
 
     glPushMatrix();
@@ -746,7 +751,7 @@ void bushA(float x, float y, float s) { // ref#bushA // ref#bushA
     glPopMatrix();
 }
 
-void bushB(float x, float y, float s) { // ref#bushB // ref#bushB
+void bushB(float x, float y, float s) { // ref#bushB
     glColor3f(0.20f, 0.42f, 0.12f);
 
     glPushMatrix();
@@ -765,7 +770,7 @@ void bushB(float x, float y, float s) { // ref#bushB // ref#bushB
     glPopMatrix();
 }
 
-void bushC(float x, float y, float s) { // ref#bushC // ref#bushC
+void bushC(float x, float y, float s) { // ref#bushC
     glColor3f(0.20f, 0.42f, 0.12f);
 
     glPushMatrix();
@@ -784,8 +789,7 @@ void bushC(float x, float y, float s) { // ref#bushC // ref#bushC
     glPopMatrix();
 }
 
-void grassMark(float x, float y)
-{ // ref#grassMark
+void grassMark(float x, float y){ // ref#grassMark
     line2D(x, y, x - 1.0f, y + 2.0f, 0.20f, 0.38f, 0.10f, 1.2f);
     line2D(x, y, x + 0.8f, y + 2.2f, 0.20f, 0.38f, 0.10f, 1.2f);
     line2D(x, y, x, y + 2.4f, 0.20f, 0.38f, 0.10f, 1.0f);
@@ -809,7 +813,10 @@ void riverBand()
     for(int i = 0; i < 4; i++)
     {
         float quad[][2] = {
-            {xs[i], botY[i]}, {xs[i+1], botY[i+1]}, {xs[i+1], topY[i+1]}, {xs[i], topY[i]}
+            {xs[i], botY[i]},
+            {xs[i+1], botY[i+1]},
+            {xs[i+1], topY[i+1]},
+            {xs[i], topY[i]}
         };
         polygon(0.20f, 0.67f, 0.84f, 4, quad);
     }
@@ -1022,6 +1029,20 @@ void village()
     riverBand();
     road();
 
+    // Grass Marks (12)
+    grassMark(10, 5);
+    grassMark(20, 10);
+    grassMark(41, 8);
+    grassMark(53, 12);
+    grassMark(76, 9);
+    grassMark(84, 16);
+    grassMark(96, 9);
+    grassMark(5, 44);
+    grassMark(15, 47);
+    grassMark(58, 56);
+    grassMark(68, 58);
+    grassMark(81, 41);
+
     // Bushes (7)
     bushA(28, 6, 1.0f); // ref#bushObj1
     bushB(67, 5, 1.0f); // ref#bushObj2
@@ -1075,6 +1096,7 @@ void village()
     streetLampA(39.0f, 48.0f); // ref#streetLampObj1
     streetLampB(77.0f, 58.0f); // ref#streetLampObj2
 
+
     // Moving Car along road
     movingCar(vehicleMove); // ref#movingCarObj1
 
@@ -1082,19 +1104,6 @@ void village()
     houseB(82, 45, 10, 6, 0.90f, 0.79f, 0.53f, 0.95f, 0.25f, 0.12f); // ref#houseObj5
     houseC(75, 44, 9, 5, 0.72f, 0.42f, 0.30f, 0.45f, 0.25f, 0.13f); // ref#houseObj6
 
-    // Grass Marks (12)
-    grassMark(10, 5);
-    grassMark(20, 10);
-    grassMark(41, 8);
-    grassMark(53, 12);
-    grassMark(76, 9);
-    grassMark(84, 16);
-    grassMark(96, 9);
-    grassMark(5, 44);
-    grassMark(15, 47);
-    grassMark(58, 56);
-    grassMark(68, 58);
-    grassMark(81, 41);
 
       // Street Lamps bottom(3)
     streetLampC(15.0f, 32.0f); // ref#streetLampObj3
@@ -1108,7 +1117,6 @@ void village()
     // Boats (1 moving across the river + 1 docked)
     movingBoat(boatMove); // ref#movingBoatObj1
     movingBoat2(boatMove2); // ref#movingBoat2Obj1
-
 
 
     glutSwapBuffers();
