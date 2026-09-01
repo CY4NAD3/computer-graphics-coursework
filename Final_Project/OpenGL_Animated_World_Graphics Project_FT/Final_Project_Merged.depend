@@ -876,3 +876,10 @@
 1526093416 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\math.h
 	<crtdefs.h>
 
+1788114858 source:g:\-computergraphics\final_project\opengl_animated_world_graphics project_ft\main.cpp
+	<windows.h>
+	<GL/glut.h>
+	<math.h>
+	<stdlib.h>
+	<iostream>
+
