@@ -1,50 +1,55 @@
 #include <windows.h>
 #include <GL/glut.h>
-#include <math.h>
 
-int colorIndex = 0;
+int color = 0;
 
-// Array of background colors (RGB values 0-1)
-float colors[3][3] = {
-    { 1.0f, 0.0f, 0.0f },  // Red
-    { 0.0f, 1.0f, 0.0f },  // Green
-    { 0.0f, 0.0f, 1.0f }   // Blue
-};
 
-void display()
-{
+void display(){
+    if(color == 0){
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    else{
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    }
+
     glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
+
+    glutSwapBuffers();
 }
 
-void changeBackgroundColor(int value)
-{
-    colorIndex = (colorIndex + 1) % 3;
 
-    glClearColor(colors[colorIndex][0], colors[colorIndex][1], colors[colorIndex][2], 1.0f);
+void toggleBg(int value){
+    if(color == 0){
+        color = 1;
+    }
+
+    else{
+        color = 0;
+    }
 
     glutPostRedisplay();
-    glutTimerFunc(20, changeBackgroundColor, 0);
+
+    glutTimerFunc(20, toggleBg, 0);
 }
 
-void init()
-{
-    glClearColor(colors[colorIndex][0], colors[colorIndex][1], colors[colorIndex][2], 1.0f);
-}
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(600, 600);
+
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+
+    glutInitWindowSize(800, 600);
+
     glutInitWindowPosition(100, 100);
+
     glutCreateWindow("Background Color Change");
 
-    init();
-
     glutDisplayFunc(display);
-    glutTimerFunc(20, changeBackgroundColor, 0);
+
+    glutTimerFunc(20, toggleBg, 0);
 
     glutMainLoop();
+
     return 0;
 }

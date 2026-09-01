@@ -1,8 +1,7 @@
 # depslib dependency file v1.0
-1788250549 source:g:\-computergraphics\lab_task\lab_task_06\lab_task_06.1\main.cpp
+1788253372 source:g:\-computergraphics\lab_task\lab_task_06\lab_task_06.1\main.cpp
 	<windows.h>
 	<GL/glut.h>
-	<math.h>
 
 1526093414 c:\program files\codeblocks\mingw\x86_64-w64-mingw32\include\windows.h
 	<_mingw.h>
